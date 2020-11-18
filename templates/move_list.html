@@ -13,7 +13,7 @@
 <div class="container">
     <div class="formwrapper">
       <h2 class="title">Move Browser</h2>
-      <form method="POST" action="/moves/list">
+      <form method="POST" action="/">
           <div class="row">
               <div class="column form-field">{{ form.name.label }} {{ form.name(size=20) }}</div>
               <div class="column form-field">{{ form.pp.label }} {{ form.pp() }}</div>
@@ -30,12 +30,12 @@
     </div>
 
     <div class="move-list header">
-        <a href=/moves/list?sort={{ '-' if reverse else '' if sort == 'name' else ''}}name><button class="listing name sort"><span>Name</span></button></a>
-        <a href=/moves/list?sort={{ '-' if reverse else '' if sort == 'power' else ''}}power><button class="listing power sort"><span>Power</span></button></a>
-        <a href=/moves/list?sort={{ '-' if reverse else '' if sort == 'pp' else ''}}pp><button class="listing pp sort"><span>PP</span></button></a>
-        <a href=/moves/list?sort={{ '-' if reverse else '' if sort == 'type' else ''}}type><button class="listing type sort"><span>Type</span></button></a>
-        <a href=/moves/list?sort={{ '-' if reverse else '' if sort == 'range' else ''}}range><button class="listing range sort"><span>Range</span></button></a>
-        <a href=/moves/list?sort={{ '-' if reverse else '' if sort == 'time' else ''}}time><button class="listing action sort"><span>Time</span></button></a>
+        <a href=?sort={{ '-' if reverse else '' if sort == 'name' else ''}}name><button class="listing name sort"><span>Name</span></button></a>
+        <a href=?sort={{ '-' if reverse else '' if sort == 'power' else ''}}power><button class="listing power sort"><span>Power</span></button></a>
+        <a href=?sort={{ '-' if reverse else '' if sort == 'pp' else ''}}pp><button class="listing pp sort"><span>PP</span></button></a>
+        <a href=?sort={{ '-' if reverse else '' if sort == 'type' else ''}}type><button class="listing type sort"><span>Type</span></button></a>
+        <a href=?sort={{ '-' if reverse else '' if sort == 'range' else ''}}range><button class="listing range sort"><span>Range</span></button></a>
+        <a href=?sort={{ '-' if reverse else '' if sort == 'time' else ''}}time><button class="listing action sort"><span>Time</span></button></a>
     </div>
 
     <ul class="list-group" id="accordion">

@@ -49,7 +49,7 @@ class MoveModel:
         self.load()
 
     def load(self):
-        for move in Path(f"./p5e-data/data/moves").iterdir():
+        for move in (Path(__file__).parent / "p5e-data/data/moves").iterdir():
             with move.open("r") as fp:
                 data = json.load(fp)
             mv = convert_move(move.stem, data)
