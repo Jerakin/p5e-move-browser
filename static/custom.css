@@ -1,0 +1,71 @@
+.listing {
+    margin: 0 11px 0 2px;
+    height: 100%;
+
+}
+.listing.name {
+    min-width: 130px;
+}
+
+.listing.power {
+    min-width: 120px;
+}
+.listing.type {
+    min-width: 75px;
+}
+.listing.pp {
+    min-width: 75px;
+}
+.listing.range {
+    min-width: 110px;
+}
+.listing.action {
+    min-width: 75px;
+}
+
+.move-list {
+    list-style: none;
+    list-style-image: none;
+    padding: 0;
+    display: flex;
+}
+
+.move-list.header {
+    margin: 0 0 0 20px;
+}
+
+.move.description {
+    display: none;
+}
+
+.formwrapper {
+    margin: auto;
+    width: 75%;
+    padding: 10px;
+}
+
+.column.form-field {
+      margin: 2px 20px 0 2px;
+}
+.alist-group-item.move:hover .move.description{
+    display: block;
+}
+
+.sort, button {
+  border: none;
+  background-color: transparent;
+  display: flex;
+  justify-content: left;
+}
+
+select {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    height: 30px;
+    min-width: 120px;
+}
+
+/* For IE10 */
+select::-ms-expand {
+  display: none;
+}

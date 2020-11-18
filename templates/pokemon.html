@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="eng">
+<head>
+    <meta charset="UTF-8">
+    <title>{{pokemon.species}}</title>
+</head>
+<body>
+    <h1>{{pokemon.species}} #{{pokemon.index}}</h1>
+    <div><b>Type: </b>{{pokemon.types}}</div>
+    <div><b>Classification: </b>{{pokemon.size}} | SR {{pokemon.sr}}</div>
+    <div><b>Minimum Level Found: </b>{{pokemon.level}}</div>
+    <div><b>Egg Group: </b>{{pokemon.egg}}</div>
+    <div><b>Evolution Stage: </b>{{pokemon.stage}} | {{pokemon.asi}} ASI</div>
+    <div><b>{{pokemon.flavor}}</b></div>
+    <img class="mon-stat-block__separator-img" alt="" src="https://media-waterdeep.cursecdn.com/file-attachments/0/579/stat-block-header-bar.svg">
+    <div><b>Armor Class: </b>{{pokemon.ac}}</div>
+    <div><b>Hit Points: </b>{{pokemon.hp}} | <b>Hit Dice: </b>{{pokemon.hd}}</div>
+    <div><b>Speed: </b>{{pokemon.speed}}</div>
+    <img class="mon-stat-block__separator-img" alt="" src="https://media-waterdeep.cursecdn.com/file-attachments/0/579/stat-block-header-bar.svg">
+    <div class="mon-attribute-bock">
+        <ul>
+            {% for attribute in pokemon.attributes %}
+            <li><div><b>{{ attribute }}</b> {{pokemon.attributes[attribute]}}</div></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <img class="mon-stat-block__separator-img" alt="" src="https://media-waterdeep.cursecdn.com/file-attachments/0/579/stat-block-header-bar.svg">
+    <div><b>Proficient Skills: </b>{{pokemon.skills}}</div>
+    <div><b>Saving Throws: </b>{{pokemon.wisdom}}</div>
+    <div><b>Vulnerabilities: </b>{{pokemon.speed}}</div>
+    <div><b>Resistance: </b>{{pokemon.speed}}</div>
+    <div><b>Immunities:: </b>{{pokemon.speed}}</div>
+    <div><b>Senses: </b>{{pokemon.senses}}</div>
+    <img class="mon-stat-block__separator-img" alt="" src="https://media-waterdeep.cursecdn.com/file-attachments/0/579/stat-block-header-bar.svg">
+
+
+</body>
+</html>
