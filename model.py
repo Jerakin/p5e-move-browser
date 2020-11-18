@@ -58,7 +58,7 @@ class MoveModel:
     def filter(self, filters):
         selected = []
         for move in self.data:
-            if _ok(filters.name) and filters.name not in move["name"]:
+            if _ok(filters.name) and filters.name.lower() not in move["name"].lower():
                 continue
             if _ok(filters.type) and not filters.type.lower() == move["type"].lower():
                 continue
