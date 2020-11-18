@@ -8,7 +8,6 @@ GENERATIONS = [[1, 151], [152, 251], [252, 386], [387, 493], [494, 649], [650, 7
 
 POKEMON_FILTER = namedtuple("Filters", ["generations", "types", "sr", "level"])
 
-# MOVE_FILTER = namedtuple("Filters", ["name", "type", "power", 'duration', 'time', "pp", 'range', "attack_type", "sort"])
 
 @dataclass
 class MoveFilter:
@@ -21,6 +20,7 @@ class MoveFilter:
     range: str
     attack_type: str
     sort: str
+
 
 pokemon_entry = {
     "species": "",
@@ -124,7 +124,7 @@ class PokemonModel:
 
     def get_pokemon_data(self, species):
         if species not in self.pokemon_data:
-            path = Path(f"./datafiles/pokemon/{species}.json")
+            path = Path(f"./p5e-data/data/pokemon/{species}.json")
             if not path.exists():
                 return None
             with path.open("r") as fp:
@@ -135,7 +135,7 @@ class PokemonModel:
 
     def get_pokemon_list(self, filters):
         if not self.filter_data:
-            with Path("./datafiles/filter_data.json").open("r") as fp:
+            with Path("./p5e-data/data/filter_data.json").open("r") as fp:
                 self.filter_data = json.load(fp)
         return _filter_pokemon_list(self.filter_data, filters)
 
@@ -173,7 +173,7 @@ class MoveModel:
         self.load()
 
     def load(self):
-        for move in Path(f"./datafiles/moves").iterdir():
+        for move in Path(f"./p5e-data/data/moves").iterdir():
             with move.open("r") as fp:
                 data = json.load(fp)
             mv = convert_move(move.stem, data)
