@@ -76,7 +76,7 @@ def post_moves_list():
 
 
 attributes = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']
-pp = ['1', '3', '5', '10', '15', '20', 'Unlimited']
+pp = ['1', '3', '5', '10', '15', '20']
 types = ["Normal", "Fire", "Water", "Electric", "Grass", "Ice", "Fighting", "Poison", "Ground", "Flying", "Psychic",
          "Bug", "Rock", "Ghost", "Dragon", "Dark", "Steel", "Fairy"]
 
@@ -94,7 +94,9 @@ class SearchForm(FlaskForm):
     name = StringField('Name', [validators.optional()])
     attack_type = SelectField(u'Attack Type', choices=_fields(['Melee', 'Range']), default=None)
     power = SelectField(u'Move Power', choices=_fields(attributes), default=None)
-    pp = SelectField(u'PP', choices=_fields(pp), default=None)
+    pp_field = _fields(pp)
+    pp_field.append(('∞', "Unlimited"))
+    pp = SelectField(u'PP', choices=pp_field, default=None)
     type = SelectField(u'Types', choices=_fields(types), default=None)
     save = SelectField(u'Save Required', choices=save_required, default=None)
     concentration = SelectField(u'Concentration Required', choices=[(None, ""), (True, "Yes")], default=None)
