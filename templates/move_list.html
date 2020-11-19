@@ -35,19 +35,23 @@
         <ul class="list-group" id="accordion">
             <li class="list-group-item border-0 border-bottom">
                 <div class="move-list">
+                    <a class="col-1"></a>
                     <a class="col" href=?sort={{ '-' if reverse else '' if sort == 'name' else ''}}name><button class="sort"><span>Name</span></button></a>
                     <a class="col" href=?sort={{ '-' if reverse else '' if sort == 'power' else ''}}power><button class="sort"><span>Move Power</span></button></a>
                     <a class="col" href=?sort={{ '-' if reverse else '' if sort == 'pp' else ''}}pp><button class="sort"><span>PP</span></button></a>
-                    <a class="col" href=?sort={{ '-' if reverse else '' if sort == 'type' else ''}}type><button class="sort"><span>Type</span></button></a>
+                    <a class="col d-none d-xl-block" href=?sort={{ '-' if reverse else '' if sort == 'type' else ''}}type><button class="sort"><span>Type</span></button></a>
                     <a class="col" href=?sort={{ '-' if reverse else '' if sort == 'range' else ''}}range><button class="sort"><span>Range</span></button></a>
-                    <a class="col" href=?sort={{ '-' if reverse else '' if sort == 'time' else ''}}time><button class="sort"><span>Move Time</span></button></a>
-                    <a class="col" href=?sort={{ '-' if reverse else '' if sort == 'duration' else ''}}duration><button class="sort"><span>Duration</span></button></a>
+                    <a class="col d-none d-md-block" href=?sort={{ '-' if reverse else '' if sort == 'time' else ''}}time><button class="sort"><span>Move Time</span></button></a>
+                    <a class="col d-none d-lg-block" href=?sort={{ '-' if reverse else '' if sort == 'duration' else ''}}duration><button class="sort"><span>Duration</span></button></a>
                 </div>
             </li>
 
             {% for move in list %}
             <li class="list-group-item border rounded-top">
                 <div class="move-list" data-toggle="collapse" data-target="#{{move.name | replace(' ','')}}">
+                    <div class="col-1">
+                        <img src="/static/type-icons/element_{{move.type | lower}}.png" alt="{{move.type}}" width="28" height="28">
+                    </div>
                     <div class="col">
                         <span>{{move.name}}</span>
                         {% if move.concentration %}
@@ -64,16 +68,16 @@
                     <div class="col">
                         <span> {{move.pp}}</span>
                     </div>
-                    <div class="col">
+                    <div class="col d-none d-xl-block">
                         <span> {{move.type}}</span>
                     </div>
                     <div class="col">
                         <span> {{move.range}}</span>
                     </div>
-                    <div class="col">
+                    <div class="col d-none d-md-block">
                         <span> {{move.time}}</span>
                     </div>
-                    <div class="col">
+                    <div class="col d-none d-lg-block">
                         <span> {{move.duration}}</span>
                     </div>
                 </div>
