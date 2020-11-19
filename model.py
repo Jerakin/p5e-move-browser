@@ -108,6 +108,16 @@ tm_lookup = {
 
 
 @dataclass
+class PokemonFilter:
+    species: str
+    variant: str
+    egg: bool
+    tm: bool
+    level: bool
+    start: bool
+
+
+@dataclass
 class MoveFilter:
     name: str
     type: str
