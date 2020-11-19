@@ -86,3 +86,12 @@ select::-ms-expand {
 .form-field {
     width: 150px;
 }
+.col-sm-3half, .col-sm-8half {
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+.col-1b {
+  max-width: 20px; !important;
+}
