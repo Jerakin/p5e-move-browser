@@ -1,6 +1,110 @@
 import json
 from pathlib import Path
 from dataclasses import dataclass
+import copy
+
+tm_lookup = {
+  "1": "Work Up",
+  "2": "Dragon Claw",
+  "3": "Psyshock",
+  "4": "Calm Mind",
+  "5": "Roar",
+  "6": "Toxic",
+  "7": "Hail",
+  "8": "Bulk Up",
+  "9": "Venoshock",
+  "10": "Hidden Power",
+  "11": "Sunny Day",
+  "12": "Taunt",
+  "13": "Ice Beam",
+  "14": "Blizzard",
+  "15": "Hyper Beam",
+  "16": "Light Screen",
+  "17": "Protect",
+  "18": "Rain Dance",
+  "19": "Roost",
+  "20": "Safeguard",
+  "21": "Frustration",
+  "22": "Solar Beam",
+  "23": "Smack Down",
+  "24": "Thunderbolt",
+  "25": "Thunder",
+  "26": "Earthquake",
+  "27": "Return",
+  "28": "Leech Life",
+  "29": "Psychic",
+  "30": "Shadow Ball",
+  "31": "Brick Break",
+  "32": "Double Team",
+  "33": "Reflect",
+  "34": "Sludge Wave",
+  "35": "Flamethrower",
+  "36": "Sludge Bomb",
+  "37": "Sandstorm",
+  "38": "Fire Blast",
+  "39": "Rock Tomb",
+  "40": "Aerial Ace",
+  "41": "Torment",
+  "42": "Facade",
+  "43": "Flame Charge",
+  "44": "Rest",
+  "45": "Attract",
+  "46": "Thief",
+  "47": "Low Sweep",
+  "48": "Round",
+  "49": "Echoed Voice",
+  "50": "Overheat",
+  "51": "Steel Wing",
+  "52": "Focus Blast",
+  "53": "Energy Ball",
+  "54": "False Swipe",
+  "55": "Scald",
+  "56": "Fling",
+  "57": "Charge Beam",
+  "58": "Sky Drop",
+  "59": "Brutal Swing",
+  "60": "Quash",
+  "61": "Will-O-Wisp",
+  "62": "Acrobatics",
+  "63": "Embargo",
+  "64": "Explosion",
+  "65": "Shadow Claw",
+  "66": "Payback",
+  "67": "Smart Strike",
+  "68": "Giga Impact",
+  "69": "Rock Polish",
+  "70": "Aurora Veil",
+  "71": "Stone Edge",
+  "72": "Volt Switch",
+  "73": "Thunder Wave",
+  "74": "Gyro Ball",
+  "75": "Swords Dance",
+  "76": "Fly",
+  "77": "Psych Up",
+  "78": "Bulldoze",
+  "79": "Frost Breath",
+  "80": "Rock Slide",
+  "81": "X-Scissor",
+  "82": "Dragon Tail",
+  "83": "Infestation",
+  "84": "Poison Jab",
+  "85": "Dream Eater",
+  "86": "Grass Knot",
+  "87": "Swagger",
+  "88": "Sleep Talk",
+  "89": "U-Turn",
+  "90": "Substitute",
+  "91": "Flash Cannon",
+  "92": "Trick Room",
+  "93": "Wild Charge",
+  "94": "Surf",
+  "95": "Snarl",
+  "96": "Nature Power",
+  "97": "Dark Pulse",
+  "98": "Waterfall",
+  "99": "Dazzling Gleam",
+  "100": "Confide"
+}
 
 
 @dataclass
@@ -50,21 +154,72 @@ def _ok(v):
     return v and not v == 'None'
 
 
+class PokemonMoveModel:
+    def __init__(self):
+        self.data = {}
+        self.move_model: MoveModel = None
+
+    def __collect_moves(self, data):
+        moves = {"tm": [], "start": [], "egg": []}
+        for level in data["Moves"]["Level"]:
+            for name in data["Moves"]["Level"][level]:
+                if level not in moves:
+                    moves[level] = []
+                moves[level].append(name)
+
+        for name in data["Moves"]["Starting Moves"]:
+            moves["start"].append(name)
+
+        if "egg" in data["Moves"]:
+            moves["egg"] = data["Moves"]["egg"]
+
+        for n in data["Moves"]["TM"]:
+            moves["tm"].append(tm_lookup[str(n)])
+        return moves
+
+    def add_move(self, move, source):
+        index = self.move_model.lookup[move]
+        move = copy.deepcopy(self.move_model.data[index])
+        move["source"] = source
+        return move
+
+    def filter(self, data, filters):
+        return self.move_model.filter(data, filters)
+
+    def load(self, pokemon):
+        if pokemon in self.data:
+            return self.data[pokemon]
+        data_file = (Path(__file__).parent / "p5e-data/data/pokemon" / pokemon).with_suffix('.json')
+        if data_file.exists():
+            with data_file.open("r") as fp:
+                data = json.load(fp)
+            moves = self.__collect_moves(data)
+            self.data[pokemon] = []
+            for source, moves in moves.items():
+                for move in moves:
+                    self.data[pokemon].append(self.add_move(move, source))
+
+            return self.data[pokemon]
+        return []
+
+
 class MoveModel:
     def __init__(self):
         self.data = []
+        self.lookup = {}
         self.load()
 
     def load(self):
-        for move in (Path(__file__).parent / "p5e-data/data/moves").iterdir():
+        for index, move in enumerate((Path(__file__).parent / "p5e-data/data/moves").iterdir()):
             with move.open("r") as fp:
                 data = json.load(fp)
             mv = convert_move(move.stem, data)
+            self.lookup[move.stem] = index
             self.data.append(mv)
 
-    def filter(self, filters):
+    def filter(self, data, filters):
         selected = []
-        for move in self.data:
+        for move in data:
             if _ok(filters.name) and filters.name.lower() not in move["name"].lower():
                 continue
             if _ok(filters.type) and not filters.type.lower() == move["type"].lower():
@@ -88,3 +243,12 @@ class MoveModel:
         sort = filters.sort[1:] if reverse else filters.sort
 
         return sorted(selected, key=lambda d: d[sort], reverse=reverse)
+
+if __name__ == '__main__':
+    mm = MoveModel()
+    pmm = PokemonMoveModel()
+    pmm.move_model = mm
+    print("-- Abomasnow")
+    pmm.load("Abomasnow")
+    print("-- Abra")
+    pmm.load("Abra")

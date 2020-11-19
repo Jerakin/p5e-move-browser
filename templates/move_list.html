@@ -12,8 +12,9 @@
 <body>
 <div class="padding-top-20 container">
     <div style="height: 20px;"></div>
+    {% if form %}
     <div class="move-list d-flex justify-content-center">
-        <form method="POST" action="/">
+        <form method="POST" action="{{ this_url }}">
             <div class="row pt-4">
                 <div class="col">
                     {{ form.name.label }}
@@ -87,6 +88,7 @@
             </div>
       </form>
     </div>
+    {% endif %}
     <div class="justify-content-center">
     <div>
         <ul class="list-group" id="accordion">
