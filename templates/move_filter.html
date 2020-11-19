@@ -1,0 +1,77 @@
+{% if form %}
+    <div class="move-list d-flex justify-content-center">
+        <form method="POST" action="{{ this_url }}">
+            <div class="row pt-4">
+                <div class="col">
+                    {{ form.name.label }}
+                </div>
+                <div class="col">
+                    {{ form.pp.label }}
+                </div>
+                <div class="col">
+                    {{ form.attack_type.label }}
+                </div>
+                <div class="col  d-none d-md-block">
+                    {{ form.save.label }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-field">{{ form.name(size=12) }}</div>
+                </div>
+                <div class="col">
+                    <div class="form-field">{{ form.pp() }}</div>
+                </div>
+                <div class="col">
+                    <div class="form-field">{{ form.attack_type() }}</div>
+                </div>
+                <div class="col  d-none d-md-block">
+                    <div class="form-field">{{ form.save() }}</div>
+                </div>
+            </div>
+            <div class="row pt-4">
+                <div class="col">
+                    {{ form.power.label }}
+                </div>
+                <div class="col">
+                    {{ form.type.label }}
+                </div>
+                <div class="col">
+                    {{ form.concentration.label }}
+                </div>
+                <div class="col d-none d-md-block">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-field">{{ form.power() }}</div>
+                </div>
+                <div class="col">
+                    <div class="form-field">{{ form.type() }}</div>
+                </div>
+                <div class="col">
+                    <div class="form-field">{{ form.concentration() }}</div>
+                </div>
+                <div class="col d-none d-md-block">
+                    {{ form.filter(class_="btn btn-primary") }}
+                    <a href="?filter=clear" class="text-center text-nowrap">Rest Filters</a>
+                </div>
+            </div>
+            <div class="row  pt-4 d-md-none">
+                <div class="col"></div>
+                <div class="col">{{ form.save.label }}</div>
+                <div class="col"></div>
+            </div>
+            <div class="row d-md-none">
+                <div class="col"></div>
+                <div class="col">
+                    <div class="form-field">{{ form.save() }}</div>
+                </div>
+                <div class="col">
+                    {{ form.filter(class_="btn btn-primary") }}
+                    <a href="?filter=clear" class="text-center text-nowrap">Rest Filters</a>
+                </div>
+            </div>
+      </form>
+    </div>
+{% endif %}

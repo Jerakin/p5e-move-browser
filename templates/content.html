@@ -1,0 +1,24 @@
+<div class="padding-top-20 container">
+    <div style="height: 20px;"></div>
+        {% include "move_filter.html" %}
+    <div class="justify-content-center">
+    <div>
+        <ul class="list-group" id="accordion">
+            <li class="list-group-item border-0 border-bottom">
+                <div class="move-list">
+                    <a class="col-1"></a>
+                    <a class="col" href=?sort={{ '-' if reverse else '' if sort == 'name' else ''}}name><button class="sort"><span>Name</span></button></a>
+                    <a class="col" href=?sort={{ '-' if reverse else '' if sort == 'power' else ''}}power><button class="sort"><span>Move Power</span></button></a>
+                    <a class="col" href=?sort={{ '-' if reverse else '' if sort == 'pp' else ''}}pp><button class="sort"><span>PP</span></button></a>
+                    <a class="col d-none d-xl-block" href=?sort={{ '-' if reverse else '' if sort == 'type' else ''}}type><button class="sort"><span>Type</span></button></a>
+                    <a class="col" href=?sort={{ '-' if reverse else '' if sort == 'range' else ''}}range><button class="sort"><span>Range</span></button></a>
+                    <a class="col d-none d-md-block" href=?sort={{ '-' if reverse else '' if sort == 'time' else ''}}time><button class="sort"><span>Move Time</span></button></a>
+                    <a class="col d-none d-lg-block" href=?sort={{ '-' if reverse else '' if sort == 'duration' else ''}}duration><button class="sort"><span>Duration</span></button></a>
+                    <a class="col-1b"></a>
+                </div>
+            </li>
+        {% include "list.html" %}
+        </ul>
+        </div>
+    </div>
+</div>
