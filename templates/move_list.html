@@ -185,7 +185,14 @@
                                 -
                             {% endif %}</p>
                         </div>
+                        {% if move.source %}
+                        <div class="col">
+                            <div><b>Source</b></div>
+                            <p>{{move.source}}</p>
+                        </div>
+                        {% else %}
                         <div class="col"></div>
+                        {% endif %}
                     </div>
                     <hr/>
                     {{move.description}}

@@ -160,21 +160,20 @@ class PokemonMoveModel:
         self.move_model: MoveModel = None
 
     def __collect_moves(self, data):
-        moves = {"tm": [], "start": [], "egg": []}
+        moves = {"TM": [], "Starting Move": [], "Egg": []}
         for level in data["Moves"]["Level"]:
             for name in data["Moves"]["Level"][level]:
                 if level not in moves:
-                    moves[level] = []
-                moves[level].append(name)
+                    moves[f"Level {level}"] = []
+                moves[f"Level {level}"].append(name)
 
-        for name in data["Moves"]["Starting Moves"]:
-            moves["start"].append(name)
+        moves["Starting Move"] = data["Moves"]["Starting Moves"]
 
         if "egg" in data["Moves"]:
-            moves["egg"] = data["Moves"]["egg"]
+            moves["Egg"] = data["Moves"]["egg"]
 
         for n in data["Moves"]["TM"]:
-            moves["tm"].append(tm_lookup[str(n)])
+            moves["TM"].append(tm_lookup[str(n)])
         return moves
 
     def add_move(self, move, source):
