@@ -30,16 +30,21 @@ def get_moves_list():
         request.args.get('pp', default=None),
         request.args.get('range', default=None),
         request.args.get('attack_type', default=None),
+        request.args.get('save', default=None),
+        request.args.get('concentration', default=None),
         request.args.get('sort', default='name')
     )
 
     formdata = session.get('filterdata', None)
-    if formdata:
+
+    if formdata and not request.args.get('filter', default=True) == "clear":
         form = SearchForm(MultiDict(formdata))
         filters.name = form.name.data
         filters.type = form.type.data
         filters.power = form.power.data
         filters.pp = form.pp.data
+        filters.save = form.save.data
+        filters.concentration = form.concentration.data
         filters.attack_type = form.attack_type.data
 
     objects = move_model.filter(filters)
@@ -61,6 +66,8 @@ def post_moves_list():
         request.form.get('pp', default=None),
         request.args.get('range', default=None),
         request.form.get('attack_type', default=None),
+        request.form.get('save', default=None),
+        request.form.get('concentration', default=None),
         request.args.get('sort', default='name')
     )
     session['filterdata'] = request.form
@@ -73,6 +80,9 @@ pp = ['1', '3', '5', '10', '15', '20', 'Unlimited']
 types = ["Normal", "Fire", "Water", "Electric", "Grass", "Ice", "Fighting", "Poison", "Ground", "Flying", "Psychic",
          "Bug", "Rock", "Ghost", "Dragon", "Dark", "Steel", "Fairy"]
 
+save_required = ([(None, ''), ('STR', "Strength"), ('DEX', "Dexterity"), ('CON', "Constitution"),
+                  ('INT', "Intelligence"), ('WIS', "Wisdom"), ('CHA', "Charisma")])
+
 
 def _fields(_list):
     t = [(x, x) for x in _list]
@@ -83,8 +93,9 @@ def _fields(_list):
 class SearchForm(FlaskForm):
     name = StringField('Name', [validators.optional()])
     attack_type = SelectField(u'Attack Type', choices=_fields(['Melee', 'Range']), default=None)
-    power = SelectField(u'Attack Power', choices=_fields(attributes), default=None)
+    power = SelectField(u'Move Power', choices=_fields(attributes), default=None)
     pp = SelectField(u'PP', choices=_fields(pp), default=None)
     type = SelectField(u'Types', choices=_fields(types), default=None)
-
-    filter = SubmitField('Filter')
+    save = SelectField(u'Save Required', choices=save_required, default=None)
+    concentration = SelectField(u'Concentration Required', choices=[(None, ""), (True, "Yes")], default=None)
+    filter = SubmitField('Filter Moves')

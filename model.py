@@ -13,6 +13,8 @@ class MoveFilter:
     pp: str
     range: str
     attack_type: str
+    save: str
+    concentration: str
     sort: str
 
 
@@ -40,6 +42,7 @@ def convert_move(name, _json):
     else:
         at = "range"
     move["attack_type"] = at
+    move["save"] = _json["Save"] if "Save" in _json else None
     return move
 
 
@@ -75,6 +78,10 @@ class MoveModel:
             if _ok(filters.time) and not filters.time == move["time"]:
                 continue
             if _ok(filters.attack_type) and filters.attack_type.lower() not in move["attack_type"]:
+                continue
+            if _ok(filters.save) and not filters.save == move["save"]:
+                continue
+            if _ok(filters.concentration) and not move["concentration"]:
                 continue
             selected.append(move)
         reverse = True if filters.sort[0] == '-' else False

@@ -10,24 +10,81 @@
     <title>Move Browser</title>
 </head>
 <body>
-<div class="container">
-
-      <h1>Move Browser</h1>
-
-    <div class="d-flex justify-content-center">
-      <form method="POST" action="/">
-          <div class="row">
-              <div class="column form-field">{{ form.name.label }} {{ form.name(size=20) }}</div>
-              <div class="column form-field">{{ form.pp.label }} {{ form.pp() }}</div>
-              <div class="column form-field">{{ form.attack_type.label }} {{ form.attack_type() }}</div>
-          </div>
-          <div class="row">
-              <div class="column form-field">{{ form.power.label }} {{ form.power() }}</div>
-              <div class="column form-field">{{ form.type.label }} {{ form.type() }}</div>
-              {{ form.filter }}
-          </div>
-
-
+<div class="padding-top-20 container">
+    <div style="height: 20px;"></div>
+    <div class="move-list d-flex justify-content-center">
+        <form method="POST" action="/">
+            <div class="row pt-4">
+                <div class="col">
+                    {{ form.name.label }}
+                </div>
+                <div class="col">
+                    {{ form.pp.label }}
+                </div>
+                <div class="col">
+                    {{ form.attack_type.label }}
+                </div>
+                <div class="col  d-none d-md-block">
+                    {{ form.save.label }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-field">{{ form.name(size=12) }}</div>
+                </div>
+                <div class="col">
+                    <div class="form-field">{{ form.pp() }}</div>
+                </div>
+                <div class="col">
+                    <div class="form-field">{{ form.attack_type() }}</div>
+                </div>
+                <div class="col  d-none d-md-block">
+                    <div class="form-field">{{ form.save() }}</div>
+                </div>
+            </div>
+            <div class="row pt-4">
+                <div class="col">
+                    {{ form.power.label }}
+                </div>
+                <div class="col">
+                    {{ form.type.label }}
+                </div>
+                <div class="col">
+                    {{ form.concentration.label }}
+                </div>
+                <div class="col d-none d-md-block">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-field">{{ form.power() }}</div>
+                </div>
+                <div class="col">
+                    <div class="form-field">{{ form.type() }}</div>
+                </div>
+                <div class="col">
+                    <div class="form-field">{{ form.concentration() }}</div>
+                </div>
+                <div class="col d-none d-md-block">
+                    {{ form.filter(class_="btn btn-primary") }}
+                    <a href="?filter=clear" class="text-center text-nowrap">Rest Filters</a>
+                </div>
+            </div>
+            <div class="row  pt-4 d-md-none">
+                <div class="col"></div>
+                <div class="col">{{ form.save.label }}</div>
+                <div class="col"></div>
+            </div>
+            <div class="row d-md-none">
+                <div class="col"></div>
+                <div class="col">
+                    <div class="form-field">{{ form.save() }}</div>
+                </div>
+                <div class="col">
+                    {{ form.filter(class_="btn btn-primary") }}
+                    <a href="?filter=clear" class="text-center text-nowrap">Rest Filters</a>
+                </div>
+            </div>
       </form>
     </div>
     <div class="justify-content-center">
@@ -83,7 +140,48 @@
                 </div>
                 <div class="collapse align-content-left" id="{{move.name | replace(' ','')}}" data-parent="#accordion">
                     <hr/>
-                    <em>{{move.description}}</em>
+                    <div class="row extra-info">
+                        <div class="col">
+                            <div><b>Move Power</b></div>
+                            <div>{% if move.power %}
+                               {{ move.power|join(', ') }}
+                            {% endif %}</div>
+                        </div>
+                        <div class="col">
+                            <div><b>PP</b></div>
+                            <p>{{move.pp}}</p>
+                        </div>
+                        <div class="col">
+                            <div><b>Type</b></div>
+                            <p>{{move.type}}</p>
+                        </div>
+                        <div class="col">
+                            <div><b>Range</b></div>
+                            <p>{{move.range}}</p>
+                        </div>
+                    </div>
+                    <div class="row extra-info">
+                        <div class="col">
+                            <div><b>Move Time</b></div>
+                            <p>{{move.time}}</p>
+                        </div>
+                        <div class="col">
+                            <div><b>Duration</b></div>
+                            <p>{{move.duration}}</p>
+                        </div>
+                        <div class="col">
+                            <div><b>Save</b></div>
+                            <p>{% if move.save %}
+                                {{move.save}} Save
+                            {% else %}
+                                -
+                            {% endif %}</p>
+                        </div>
+                        <div class="col"></div>
+                    </div>
+                    <hr/>
+                    {{move.description}}
+                    {{move.extra}}
                 </div>
             </li>
             {% endfor %}

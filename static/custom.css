@@ -28,6 +28,7 @@
     list-style-image: none;
     padding: 0;
     display: flex;
+    font-size: 0.85rem; !important;
 }
 
 .move-list.header {
@@ -76,4 +77,12 @@ select::-ms-expand {
     height: 12px;
     display: inline-block;
 
+}
+
+.extra-info {
+    font-size: 0.7rem; !important;
+}
+
+.form-field {
+    width: 150px;
 }
