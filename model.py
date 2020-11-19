@@ -21,7 +21,7 @@ def convert_move(name, _json):
     _range = _json["Range"]
     move["name"] = name
     move["description"] = _json["Description"]
-    move["duration"] = _json["Duration"]
+    move["duration"] = _json["Duration"].replace(", Concentration", "")
     move["power"] = _json["Move Power"] if "Move Power" in _json else None
     pp = str(_json["PP"])
     if "Unl" in pp:
@@ -30,6 +30,7 @@ def convert_move(name, _json):
     move["time"] = _json["Move Time"].title()
     move["range"] = "Self" if "Self" in _range else _range
     move["type"] = _json["Type"]
+    move["concentration"] = True if "Concentration" in _json["Duration"] else False
     if "Self" in _range:
         at = "melee"
     elif "Melee" in _range:

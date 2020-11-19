@@ -69,3 +69,11 @@ select {
 select::-ms-expand {
   display: none;
 }
+
+.concentration {
+    background-image: url(../static/concentration.svg);
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+
+}

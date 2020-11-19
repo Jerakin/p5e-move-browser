@@ -41,6 +41,7 @@
                     <a class="col" href=?sort={{ '-' if reverse else '' if sort == 'type' else ''}}type><button class="sort"><span>Type</span></button></a>
                     <a class="col" href=?sort={{ '-' if reverse else '' if sort == 'range' else ''}}range><button class="sort"><span>Range</span></button></a>
                     <a class="col" href=?sort={{ '-' if reverse else '' if sort == 'time' else ''}}time><button class="sort"><span>Move Time</span></button></a>
+                    <a class="col" href=?sort={{ '-' if reverse else '' if sort == 'duration' else ''}}duration><button class="sort"><span>Duration</span></button></a>
                 </div>
             </li>
 
@@ -49,6 +50,9 @@
                 <div class="move-list" data-toggle="collapse" data-target="#{{move.name | replace(' ','')}}">
                     <div class="col">
                         <span>{{move.name}}</span>
+                        {% if move.concentration %}
+                        <i class="concentration"></i>
+                        {% endif %}
                     </div>
                     <div class="col">
                         <span>
@@ -69,8 +73,12 @@
                     <div class="col">
                         <span> {{move.time}}</span>
                     </div>
+                    <div class="col">
+                        <span> {{move.duration}}</span>
+                    </div>
                 </div>
                 <div class="collapse align-content-left" id="{{move.name | replace(' ','')}}" data-parent="#accordion">
+                    <hr/>
                     <em>{{move.description}}</em>
                 </div>
             </li>
