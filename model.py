@@ -186,6 +186,7 @@ class PokemonMoveModel:
         return self.move_model.filter(data, filters)
 
     def load(self, pokemon):
+        pokemon = pokemon.capitalize()
         if pokemon in self.data:
             return self.data[pokemon]
         data_file = (Path(__file__).parent / "p5e-data/data/pokemon" / pokemon).with_suffix('.json')
