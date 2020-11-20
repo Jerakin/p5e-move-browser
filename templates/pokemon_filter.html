@@ -1,7 +1,12 @@
+<datalist id="pkmn-list">
+    {% for pkmn in pokemon %}
+	<option>{{pkmn}}</option>
+    {% endfor %}
+</datalist>
 <div class="row pt-4">
     <div class="col">
         {{ form.species.label }}
-        <div class="form-field">{{ form.species(size=12, class="species-field") }}</div>
+        <div class="form-field">{{ form.species(size=12, class="species-field", list="pkmn-list") }}</div>
     </div>
     <div class="col-1">
         {{ form.tm.label }}

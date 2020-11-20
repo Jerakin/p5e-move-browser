@@ -166,7 +166,13 @@ class PokemonMoveModel:
         self.data = {}
         self.evolve_from = {}
         self.move_model: MoveModel = None
+        self.list = []
+        self.__build_list()
         self.__cache_evolve_from_data()
+
+    def __build_list(self):
+        for pkmn in (Path(__file__).parent / "p5e-data/data/pokemon").iterdir():
+            self.list.append(pkmn.stem)
 
     def __cache_evolve_from_data(self):
         with (Path(__file__).parent / "p5e-data/data/evolve.json").open("r") as fp:

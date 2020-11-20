@@ -92,30 +92,14 @@ def get_request(objects, this_url="/"):
     form = SearchForm()
     sort = request.args.get('sort')
     reverse = not (sort and sort[0] == "-")
-    return render_template("home.html", list=objects, form=form, sort=sort, reverse=reverse, this_url=this_url)
+
+    return render_template("home.html", list=objects, form=form, sort=sort, reverse=reverse, this_url=this_url, pokemon=pokemon_model.list)
 
 
 def post_request(objects, this_url="/"):
     form = SearchForm()
     session['movefilterdata'] = request.form
-    return render_template("home.html", list=objects, form=form, this_url=this_url)
-
-
-@app.route("/pokemon/<string:pokemon>", methods=['GET'])
-def get_pokemon_list(pokemon):
-    filters = get_filter()
-    handle_session_data(filters)
-    all_objects = pokemon_model.load(pokemon)
-    objects = pokemon_model.filter(all_objects, filters)
-    return get_request(objects, request.path)
-
-
-@app.route("/pokemon/<string:pokemon>", methods=['POST'])
-def post_pokemon_list(pokemon):
-    filters = post_filter()
-    all_objects = pokemon_model.load(pokemon)
-    objects = pokemon_model.filter(all_objects, filters)
-    return get_request(objects, request.path)
+    return render_template("home.html", list=objects, form=form, this_url=this_url, pkmn_list=pokemon_model.list)
 
 
 @app.route("/", methods=['GET'])
