@@ -2,9 +2,15 @@
     $(document).ready(function () {
             $('.species-field').change(function() {
                 if (document.getElementById('species').value.length > 3) {
-                    $('.enable-after-species').removeAttr('disabled')
+                    document.getElementById('tm').disabled = false;
+                    document.getElementById('egg').disabled = false;
+                    document.getElementById('level').disabled = false;
+                    document.getElementById('start').disabled = false;
                 } else {
-                    $('.enable-after-species').attr('disabled', 'disabled');
+                    document.getElementById('tm').disabled = true;
+                    document.getElementById('egg').disabled = true;
+                    document.getElementById('level').disabled = true;
+                    document.getElementById('start').disabled = true;
                 }
             });
     });
