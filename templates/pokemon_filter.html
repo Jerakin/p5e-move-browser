@@ -1,40 +1,22 @@
 <div class="row pt-4">
     <div class="col">
         {{ form.species.label }}
-    </div>
-    <!--<div class="col">
-        {{ form.variant.label }}
-    </div>-->
-    <div class="col">
-        {{ form.tm.label }}
-    </div>
-    <div class="col">
-        {{ form.egg.label }}
-    </div>
-    <div class="col">
-        {{ form.level.label }}
-    </div>
-    <div class="col">
-        {{ form.start.label }}
-    </div>
-</div>
-<div class="row">
-    <div class="col">
         <div class="form-field">{{ form.species(size=12, class="species-field") }}</div>
     </div>
-    <!--<div class="col">
-        <div class="form-field">{{ form.variant() }}</div>
-    </div>-->
-    <div class="col">
+    <div class="col-1">
+        {{ form.tm.label }}
         <div class="form-field">{{ form.tm(class="enable-after-species") }}</div>
     </div>
-    <div class="col">
+    <div class="col-1">
+        {{ form.egg.label }}
         <div class="form-field">{{ form.egg(class="enable-after-species") }}</div>
     </div>
-    <div class="col">
+    <div class="col-1">
+        {{ form.level.label }}
         <div class="form-field">{{ form.level(class="enable-after-species") }}</div>
     </div>
-    <div class="col">
+    <div class="col-1">
+        {{ form.start.label }}
         <div class="form-field">{{ form.start(class="enable-after-species") }}</div>
     </div>
 </div>
