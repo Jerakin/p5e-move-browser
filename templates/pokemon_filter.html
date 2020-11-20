@@ -20,21 +20,21 @@
 </div>
 <div class="row">
     <div class="col">
-        <div class="form-field">{{ form.species(size=12) }}</div>
+        <div class="form-field">{{ form.species(size=12, class="species-field") }}</div>
     </div>
     <!--<div class="col">
         <div class="form-field">{{ form.variant() }}</div>
     </div>-->
     <div class="col">
-        <div class="form-field">{{ form.tm() }}</div>
+        <div class="form-field">{{ form.tm(class="enable-after-species") }}</div>
     </div>
     <div class="col">
-        <div class="form-field">{{ form.egg() }}</div>
+        <div class="form-field">{{ form.egg(class="enable-after-species") }}</div>
     </div>
     <div class="col">
-        <div class="form-field">{{ form.level() }}</div>
+        <div class="form-field">{{ form.level(class="enable-after-species") }}</div>
     </div>
     <div class="col">
-        <div class="form-field">{{ form.start() }}</div>
+        <div class="form-field">{{ form.start(class="enable-after-species") }}</div>
     </div>
 </div>

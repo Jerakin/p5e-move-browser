@@ -1,0 +1,11 @@
+<script>
+    $(document).ready(function () {
+            $('.species-field').change(function() {
+                if (document.getElementById('species').value.length > 3) {
+                    $('.enable-after-species').removeAttr('disabled')
+                } else {
+                    $('.enable-after-species').attr('disabled', 'disabled');
+                }
+            });
+    });
+</script>

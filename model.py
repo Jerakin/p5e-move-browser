@@ -164,9 +164,19 @@ def _ok(v):
 class PokemonMoveModel:
     def __init__(self):
         self.data = {}
+        self.evolve_from = {}
         self.move_model: MoveModel = None
+        self.__cache_evolve_from_data()
 
-    def __collect_moves(self, data):
+    def __cache_evolve_from_data(self):
+        with (Path(__file__).parent / "p5e-data/data/evolve.json").open("r") as fp:
+            evolve_data = json.load(fp)
+        for species, data in evolve_data.items():
+            if "into" in data:
+                for into in data["into"]:
+                    self.evolve_from[into] = species
+
+    def __collect_moves(self, species, data):
         moves = {"TM": [], "Starting Move": [], "Egg": []}
         for level in data["Moves"]["Level"]:
             for name in data["Moves"]["Level"][level]:
@@ -178,6 +188,18 @@ class PokemonMoveModel:
 
         if "egg" in data["Moves"]:
             moves["Egg"] = data["Moves"]["egg"]
+        else:
+            evolved_from = species
+            while evolved_from:
+                evolved_from = self.evolve_from[evolved_from] if evolved_from in self.evolve_from else False
+                if evolved_from:
+                    cached_moves = self.load(evolved_from)
+                    for move in cached_moves:
+                        if move["source"] == "Egg":
+                            name = move["name"]
+                            if name not in moves["Egg"]:
+                                moves["Egg"].append(move["name"])
+
 
         for n in data["Moves"]["TM"]:
             moves["TM"].append(tm_lookup[str(n)])
@@ -212,10 +234,11 @@ class PokemonMoveModel:
         if data_file.exists():
             with data_file.open("r") as fp:
                 data = json.load(fp)
-            moves = self.__collect_moves(data)
+            moves = self.__collect_moves(pokemon, data)
             self.data[pokemon] = []
             for source, moves in moves.items():
                 for move in moves:
+                    print(move)
                     self.data[pokemon].append(self.add_move(move, source))
 
             return self.data[pokemon]
@@ -264,6 +287,7 @@ class MoveModel:
         sort = filters.sort[1:] if reverse else filters.sort
 
         return sorted(selected, key=lambda d: d[sort], reverse=reverse)
+
 
 if __name__ == '__main__':
     mm = MoveModel()
