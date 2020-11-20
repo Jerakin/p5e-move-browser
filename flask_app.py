@@ -141,14 +141,14 @@ def _fields(_list):
 
 
 class SearchForm(FlaskForm):
-    species = StringField("Species")
+    species = StringField("Pokémon Species")
     variant = SelectField(u'Variant', choices=[], default=None)
     start = BooleanField(u'Start', default=True)
     level = BooleanField(u'Level', default=True)
     tm = BooleanField(u'TM', default=True)
     egg = BooleanField(u'Egg', default=True)
 
-    name = StringField('Name')
+    name = StringField('Move Name')
     attack_type = SelectField(u'Attack Type', choices=_fields(['Melee', 'Range']), default=None)
     power = SelectField(u'Move Power', choices=_fields(attributes), default=None)
     pp_field = _fields(pp)
