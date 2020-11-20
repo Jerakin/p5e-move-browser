@@ -1,0 +1,9 @@
+{% if form %}
+<div class="move-list d-flex justify-content-center">
+    <form method="POST" action="{{ this_url }}">
+        {% include "pokemon_filter.html" %}
+        <hr/>
+        {% include "move_filter.html" %}
+     </form>
+</div>
+{% endif %}

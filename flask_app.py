@@ -23,6 +23,12 @@ pokemon_model.move_model = move_model
 
 def get_filter():
     filters = model.MoveFilter(
+        request.args.get('species', default=None),
+        request.args.get('variant', default=None),
+        request.args.get('egg', default=None),
+        request.args.get('tm', default=None),
+        request.args.get('level', default=None),
+        request.args.get('start', default=None),
         request.args.get('name', default=None),
         request.args.get('type', default=None),
         request.args.get('power', default=None),
@@ -35,20 +41,18 @@ def get_filter():
         request.args.get('concentration', default=None),
         request.args.get('sort', default='name')
     )
-    pokemon_filters = model.PokemonFilter(
-        request.args.get('species', default=None),
-        request.args.get('variant', default=None),
-        request.args.get('egg', default=None),
-        request.args.get('tm', default=None),
-        request.args.get('level', default=None),
-        request.args.get('start', default=None)
-    )
 
-    return filters, pokemon_filters
+    return filters
 
 
 def post_filter():
     filters = model.MoveFilter(
+        request.form.get('species', default=None),
+        request.form.get('variant', default=None),
+        request.form.get('egg', default=None),
+        request.form.get('tm', default=None),
+        request.form.get('level', default=None),
+        request.form.get('start', default=None),
         request.form.get('name', default=None),
         request.form.get('type', default=None),
         request.form.get('power', default=None),
@@ -62,22 +66,19 @@ def post_filter():
         request.args.get('sort', default='name')
     )
 
-    pokemon_filters = model.PokemonFilter(
-        request.form.get('species', default=None),
-        request.form.get('variant', default=None),
-        request.form.get('egg', default=None),
-        request.form.get('tm', default=None),
-        request.form.get('level', default=None),
-        request.form.get('start', default=None)
-    )
-    return filters, pokemon_filters
+    return filters
 
 
-def handle_session_data(filters, pokemon_filters):
-    pokemon_form_data = session.get('pokemonfilterdata', None)
+def handle_session_data(filters):
     form_data = session.get('movefilterdata', None)
     if form_data and not request.args.get('filter', default=True) == "clear":
         form = SearchForm(MultiDict(form_data))
+        filters.species = form.species.data
+        filters.variant = form.variant.data
+        filters.egg = form.egg.data
+        filters.tm = form.tm.data
+        filters.level = form.level.data
+        filters.start = form.start.data
         filters.name = form.name.data
         filters.type = form.type.data
         filters.power = form.power.data
@@ -86,36 +87,24 @@ def handle_session_data(filters, pokemon_filters):
         filters.concentration = form.concentration.data
         filters.attack_type = form.attack_type.data
 
-    if pokemon_form_data and not request.args.get('filter', default=True) == "clear":
-        form = PokemonSearchForm(MultiDict(form_data))
-        pokemon_filters.species = form.species.data
-        pokemon_filters.variant = form.variant.data
-        pokemon_filters.start = form.start.data
-        pokemon_filters.level = form.level.data
-        pokemon_filters.tm = form.tm.data
-        pokemon_filters.egg = form.egg.data
-
 
 def get_request(objects, this_url="/"):
     form = SearchForm()
-    pokemon_form = PokemonSearchForm()
     sort = request.args.get('sort')
     reverse = not (sort and sort[0] == "-")
-    return render_template("home.html", list=objects, pokemon_form=pokemon_form, form=form, sort=sort, reverse=reverse, this_url=this_url)
+    return render_template("home.html", list=objects, form=form, sort=sort, reverse=reverse, this_url=this_url)
 
 
 def post_request(objects, this_url="/"):
     form = SearchForm()
-    pokemon_form = PokemonSearchForm()
     session['movefilterdata'] = request.form
-    session['pokemonfilterdata'] = pokemon_form.form
-    return render_template("home.html", list=objects, pokemon_form=pokemon_form, form=form, this_url=this_url)
+    return render_template("home.html", list=objects, form=form, this_url=this_url)
 
 
 @app.route("/pokemon/<string:pokemon>", methods=['GET'])
 def get_pokemon_list(pokemon):
-    filters, pkmn_filters = get_filter()
-    handle_session_data(filters, pkmn_filters)
+    filters = get_filter()
+    handle_session_data(filters)
     all_objects = pokemon_model.load(pokemon)
     objects = pokemon_model.filter(all_objects, filters)
     return get_request(objects, request.path)
@@ -131,16 +120,24 @@ def post_pokemon_list(pokemon):
 
 @app.route("/", methods=['GET'])
 def get_moves_list():
-    filters, pkmn_filters = get_filter()
-    handle_session_data(filters, pkmn_filters)
-    objects = move_model.filter(move_model.data, filters)
+    filters = get_filter()
+    handle_session_data(filters)
+    if filters.species:
+        moves = pokemon_model.load(filters.species)
+        objects = pokemon_model.filter(moves, filters)
+    else:
+        objects = move_model.filter(move_model.data, filters)
     return get_request(objects)
 
 
 @app.route("/", methods=['POST'])
 def post_moves_list():
     filters = post_filter()
-    objects = move_model.filter(move_model.data, filters)
+    if filters.species:
+        moves = pokemon_model.load(filters.species)
+        objects = pokemon_model.filter(moves, filters)
+    else:
+        objects = move_model.filter(move_model.data, filters)
     return post_request(objects)
 
 
@@ -160,7 +157,14 @@ def _fields(_list):
 
 
 class SearchForm(FlaskForm):
-    name = StringField('Name', [validators.optional()])
+    species = StringField("Species")
+    variant = SelectField(u'Variant', choices=[], default=None)
+    start = BooleanField(u'Start', default=True)
+    level = BooleanField(u'Level', default=True)
+    tm = BooleanField(u'TM', default=True)
+    egg = BooleanField(u'Egg', default=True)
+
+    name = StringField('Name')
     attack_type = SelectField(u'Attack Type', choices=_fields(['Melee', 'Range']), default=None)
     power = SelectField(u'Move Power', choices=_fields(attributes), default=None)
     pp_field = _fields(pp)
@@ -170,12 +174,3 @@ class SearchForm(FlaskForm):
     save = SelectField(u'Save Required', choices=save_required, default=None)
     concentration = SelectField(u'Concentration Required', choices=[(None, ""), (True, "Yes")], default=None)
     filter = SubmitField('Filter Moves')
-
-
-class PokemonSearchForm(FlaskForm):
-    species = StringField("Species", [validators.optional()])
-    variant = SelectField(u'Move Power', choices=[], default=None)
-    start = BooleanField(u'Start', default=False)
-    level = BooleanField(u'Level', default=False)
-    tm = BooleanField(u'TM', default=False)
-    egg = BooleanField(u'Egg', default=False)

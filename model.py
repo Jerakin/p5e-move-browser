@@ -108,17 +108,13 @@ tm_lookup = {
 
 
 @dataclass
-class PokemonFilter:
+class MoveFilter:
     species: str
     variant: str
     egg: bool
     tm: bool
     level: bool
     start: bool
-
-
-@dataclass
-class MoveFilter:
     name: str
     type: str
     power: str
@@ -193,7 +189,19 @@ class PokemonMoveModel:
         return move
 
     def filter(self, data, filters):
-        return self.move_model.filter(data, filters)
+        selected = []
+        for move in data:
+            if filters.tm is None and move["source"] == "TM":
+                continue
+            if filters.level is None and "Level" in move["source"]:
+                continue
+            if filters.start is None and "Start" in move["source"]:
+                continue
+            if filters.egg is None and move["source"] == "Egg":
+                continue
+
+            selected.append(move)
+        return self.move_model.filter(selected, filters)
 
     def load(self, pokemon):
         pokemon = pokemon.capitalize()
