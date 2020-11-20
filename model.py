@@ -180,7 +180,7 @@ class PokemonMoveModel:
         moves = {"TM": [], "Starting Move": [], "Egg": []}
         for level in data["Moves"]["Level"]:
             for name in data["Moves"]["Level"][level]:
-                if level not in moves:
+                if f"Level {level}" not in moves:
                     moves[f"Level {level}"] = []
                 moves[f"Level {level}"].append(name)
 
@@ -262,8 +262,6 @@ class MoveModel:
     def filter(self, data, filters):
         selected = []
         for move in data:
-            if move["name"] == "Substitute":
-                print(move["name"])
             if _ok(filters.name) and filters.name.lower() not in move["name"].lower():
                 continue
             if _ok(filters.type) and not filters.type.lower() == move["type"].lower():
