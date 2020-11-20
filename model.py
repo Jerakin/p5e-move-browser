@@ -237,7 +237,6 @@ class PokemonMoveModel:
             self.data[pokemon] = []
             for source, moves in moves.items():
                 for move in moves:
-                    print(move)
                     self.data[pokemon].append(self.add_move(move, source))
 
             return self.data[pokemon]
