@@ -30,6 +30,7 @@
 
 [data-theme="dark"] input {
   background-color: #292929 !important;
+  color: #eee !important;
 }
 
 [data-theme="dark"] select {
