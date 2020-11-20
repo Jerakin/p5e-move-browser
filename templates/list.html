@@ -1,5 +1,5 @@
 {% for move in list %}
-    <li class="list-group-item border rounded-top">
+    <li class="list-group-item border rounded-top bg-white">
         <div class="move-list" data-toggle="collapse" data-target="#{{move.name | replace(' ','') | replace('\'','')}}">
             <div class="col-1">
                 {% if move.type != "Typeless" %}
