@@ -1,8 +1,10 @@
 {% for move in list %}
     <li class="list-group-item border rounded-top">
-        <div class="move-list" data-toggle="collapse" data-target="#{{move.name | replace(' ','')}}">
+        <div class="move-list" data-toggle="collapse" data-target="#{{move.name | replace(' ','') | replace('\'','')}}">
             <div class="col-1">
+                {% if move.type != "Typeless" %}
                 <img src="/static/type-icons/element_{{move.type | lower}}.png" alt="{{move.type}}" width="28" height="28">
+                {% endif %}
             </div>
             <div class="col">
                 <span>{{move.name}}</span>
@@ -38,7 +40,7 @@
                 </svg>
             </div>
         </div>
-        <div class="collapse align-content-left" id="{{move.name | replace(' ','')}}" data-parent="#accordion">
+        <div class="collapse align-content-left" id="{{move.name | replace(' ','') | replace('\'','')}}" data-parent="#accordion">
             <hr/>
             <div class="row extra-info">
                 <div class="col">
