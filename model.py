@@ -1,5 +1,6 @@
 import json
 import sys
+import difflib
 from pathlib import Path
 from dataclasses import dataclass
 import copy
@@ -167,12 +168,15 @@ class PokemonMoveModel:
         self.evolve_from = {}
         self.move_model: MoveModel = None
         self.list = []
+        self.list_lower_case = []
+        self.pokemon = None
         self.__build_list()
         self.__cache_evolve_from_data()
 
     def __build_list(self):
         for pkmn in (Path(__file__).parent / "p5e-data/data/pokemon").iterdir():
             self.list.append(pkmn.stem)
+            self.list_lower_case.append(pkmn.stem.lower())
 
     def __cache_evolve_from_data(self):
         with (Path(__file__).parent / "p5e-data/data/evolve.json").open("r") as fp:
@@ -232,7 +236,9 @@ class PokemonMoveModel:
         return self.move_model.filter(selected, filters)
 
     def load(self, pokemon):
-        pokemon = pokemon.title()
+        hit = difflib.get_close_matches(pokemon.lower(), self.list_lower_case, 1)
+        pokemon = self.list[self.list_lower_case.index(hit[0])]
+        self.pokemon = pokemon
         if pokemon in self.data:
             return self.data[pokemon]
         data_file = (Path(__file__).parent / "p5e-data/data/pokemon" / (pokemon + '.json'))

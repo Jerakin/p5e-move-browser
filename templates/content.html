@@ -1,4 +1,7 @@
 <div class="padding-top-20 container">
+    {% if pokemon %}
+    <h3>Showing {{pokemon}}'s moves</h3>
+    {% endif %}
     <div style="height: 20px;"></div>
         {% include "form.html" %}
     <div class="justify-content-center">

@@ -3,7 +3,6 @@ import os
 from flask import Flask, render_template, request, abort, jsonify, session
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextField, SubmitField, SelectField, BooleanField
-import wtforms.validators as validators
 from werkzeug.datastructures import MultiDict
 
 try:
@@ -93,17 +92,34 @@ def get_request(objects, this_url="/"):
     sort = request.args.get('sort')
     reverse = not (sort and sort[0] == "-")
 
-    return render_template("home.html", list=objects, form=form, sort=sort, reverse=reverse, this_url=this_url, pokemon=pokemon_model.list)
+    return render_template(
+        "home.html",
+        list=objects,
+        form=form,
+        sort=sort,
+        reverse=reverse,
+        this_url=this_url,
+        pokemon=pokemon_model.pokemon,
+        pkmn_list=pokemon_model.list
+    )
 
 
 def post_request(objects, this_url="/"):
     form = SearchForm()
     session['movefilterdata'] = request.form
-    return render_template("home.html", list=objects, form=form, this_url=this_url, pkmn_list=pokemon_model.list)
+    return render_template(
+        "home.html",
+        list=objects,
+        form=form,
+        this_url=this_url,
+        pokemon=pokemon_model.pokemon,
+        pkmn_list=pokemon_model.list
+    )
 
 
 @app.route("/", methods=['GET'])
 def get_moves_list():
+    pokemon_model.pokemon = None
     filters = get_filter()
     handle_session_data(filters)
     if filters.species:
@@ -116,6 +132,7 @@ def get_moves_list():
 
 @app.route("/", methods=['POST'])
 def post_moves_list():
+    pokemon_model.pokemon = None
     filters = post_filter()
     if filters.species:
         moves = pokemon_model.load(filters.species)
