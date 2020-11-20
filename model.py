@@ -1,4 +1,5 @@
 import json
+import sys
 from pathlib import Path
 from dataclasses import dataclass
 import copy
@@ -219,7 +220,8 @@ class PokemonMoveModel:
 
             return self.data[pokemon]
         else:
-            raise FileNotFoundError(data_file)
+            print("Could not find", data_file, file=sys.stderr)
+        return []
 
 
 class MoveModel:
