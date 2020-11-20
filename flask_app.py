@@ -105,7 +105,10 @@ def post_request(objects, this_url="/"):
 def get_pokemon_list(pokemon):
     filters = get_filter()
     handle_session_data(filters)
-    all_objects = pokemon_model.load(pokemon)
+    try:
+        all_objects = pokemon_model.load(pokemon)
+    except FileNotFoundError:
+        all_objects = []
     objects = pokemon_model.filter(all_objects, filters)
     return get_request(objects, request.path)
 
@@ -113,7 +116,10 @@ def get_pokemon_list(pokemon):
 @app.route("/pokemon/<string:pokemon>", methods=['POST'])
 def post_pokemon_list(pokemon):
     filters = post_filter()
-    all_objects = pokemon_model.load(pokemon)
+    try:
+        all_objects = pokemon_model.load(pokemon)
+    except FileNotFoundError:
+        all_objects = []
     objects = pokemon_model.filter(all_objects, filters)
     return get_request(objects, request.path)
 
@@ -123,7 +129,10 @@ def get_moves_list():
     filters = get_filter()
     handle_session_data(filters)
     if filters.species:
-        moves = pokemon_model.load(filters.species)
+        try:
+            moves = pokemon_model.load(filters.species)
+        except FileNotFoundError:
+            moves = []
         objects = pokemon_model.filter(moves, filters)
     else:
         objects = move_model.filter(move_model.data, filters)
@@ -134,7 +143,10 @@ def get_moves_list():
 def post_moves_list():
     filters = post_filter()
     if filters.species:
-        moves = pokemon_model.load(filters.species)
+        try:
+            moves = pokemon_model.load(filters.species)
+        except FileNotFoundError:
+            moves = []
         objects = pokemon_model.filter(moves, filters)
     else:
         objects = move_model.filter(move_model.data, filters)

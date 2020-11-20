@@ -219,8 +219,7 @@ class PokemonMoveModel:
 
             return self.data[pokemon]
         else:
-            print("Can not find Pokemon at", data_file)
-        return []
+            raise FileNotFoundError(data_file)
 
 
 class MoveModel:
