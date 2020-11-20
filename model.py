@@ -262,11 +262,13 @@ class MoveModel:
     def filter(self, data, filters):
         selected = []
         for move in data:
+            if move["name"] == "Substitute":
+                print(move["name"])
             if _ok(filters.name) and filters.name.lower() not in move["name"].lower():
                 continue
             if _ok(filters.type) and not filters.type.lower() == move["type"].lower():
                 continue
-            if _ok(filters.power) and (move["power"] is not None and filters.power not in move["power"]) or move["power"] is None:
+            if _ok(filters.power) and (filters.power not in move["power"]):
                 continue
             if _ok(filters.range) and not filters.range == move["range"]:
                 continue
@@ -280,6 +282,7 @@ class MoveModel:
                 continue
             if _ok(filters.concentration) and not move["concentration"]:
                 continue
+
             selected.append(move)
         reverse = True if filters.sort[0] == '-' else False
         sort = filters.sort[1:] if reverse else filters.sort
