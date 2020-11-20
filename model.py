@@ -205,9 +205,9 @@ class PokemonMoveModel:
                             name = move["name"]
                             if name not in moves["Egg"]:
                                 moves["Egg"].append(move["name"])
-
-        for n in data["Moves"]["TM"]:
-            moves["TM"].append(tm_lookup[str(n)])
+        if "TM" in data["Moves"]:
+            for n in data["Moves"]["TM"]:
+                moves["TM"].append(tm_lookup[str(n)])
         return moves
 
     def add_move(self, move, source):
