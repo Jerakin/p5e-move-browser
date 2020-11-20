@@ -207,7 +207,7 @@ class PokemonMoveModel:
         pokemon = pokemon.capitalize()
         if pokemon in self.data:
             return self.data[pokemon]
-        data_file = (Path(__file__).parent / "p5e-data/data/pokemon" / pokemon).with_suffix('.json')
+        data_file = (Path(__file__).parent / "p5e-data/data/pokemon" / (pokemon + '.json'))
         if data_file.exists():
             with data_file.open("r") as fp:
                 data = json.load(fp)
@@ -218,6 +218,8 @@ class PokemonMoveModel:
                     self.data[pokemon].append(self.add_move(move, source))
 
             return self.data[pokemon]
+        else:
+            print("Can not find Pokemon at", data_file)
         return []
 
 
