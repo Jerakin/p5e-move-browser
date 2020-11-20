@@ -20,7 +20,7 @@
                 </span>
             </div>
             <div class="col">
-                <span> {{move.pp}}</span>
+                <span>{% if move.pp == 99 %} ∞ {% else %} {{move.pp}} {% endif %}</span>
             </div>
             <div class="col d-none d-xl-block">
                 <span> {{move.type}}</span>

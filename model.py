@@ -135,10 +135,10 @@ def convert_move(name, _json):
     move["name"] = name
     move["description"] = _json["Description"]
     move["duration"] = _json["Duration"].replace(", Concentration", "")
-    move["power"] = _json["Move Power"] if "Move Power" in _json else None
-    pp = str(_json["PP"])
-    if "Unl" in pp:
-        pp = '∞'
+    move["power"] = _json["Move Power"] if "Move Power" in _json else []
+    pp = _json["PP"]
+    if "Unl" in str(pp):
+        pp = 99
     move["pp"] = pp
     move["time"] = _json["Move Time"].title()
     move["range"] = "Self" if "Self" in _range else _range
@@ -272,11 +272,11 @@ class MoveModel:
                 continue
             if _ok(filters.type) and not filters.type.lower() == move["type"].lower():
                 continue
-            if _ok(filters.power) and (filters.power not in move["power"]):
+            if _ok(filters.power) and "power" in move and filters.power not in move["power"]:
                 continue
             if _ok(filters.range) and not filters.range == move["range"]:
                 continue
-            if _ok(filters.pp) and not filters.pp == move["pp"]:
+            if _ok(filters.pp) and not int(filters.pp) == move["pp"]:
                 continue
             if _ok(filters.time) and not filters.time == move["time"]:
                 continue

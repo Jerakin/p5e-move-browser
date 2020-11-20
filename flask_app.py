@@ -152,7 +152,7 @@ class SearchForm(FlaskForm):
     attack_type = SelectField(u'Attack Type', choices=_fields(['Melee', 'Range']), default=None)
     power = SelectField(u'Move Power', choices=_fields(attributes), default=None)
     pp_field = _fields(pp)
-    pp_field.append(('∞', "Unlimited"))
+    pp_field.append(("99", "Unlimited"))
     pp = SelectField(u'PP', choices=pp_field, default=None)
     type = SelectField(u'Types', choices=_fields(types), default=None)
     save = SelectField(u'Save Required', choices=save_required, default=None)
