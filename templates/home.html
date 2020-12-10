@@ -10,9 +10,20 @@
     <title>{% if pokemon %} {{pokemon}} {% else %} Move Browser {% endif %}</title>
 </head>
 <body>
-<div class="custom-control custom-switch">
-  <input type="checkbox" class="custom-control-input" id="darkSwitch" />
-  <label class="custom-control-label" for="darkSwitch">Dark Mode</label>
+
+    <div class="d-flex p-2 d-flex justify-content-between" >
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="darkSwitch" />
+            <label class="custom-control-label" for="darkSwitch">Dark Mode</label>
+        </div>
+    <div>
+        <a>Support me </a>
+        <a href="https://ko-fi.com/jerakin">
+            <img href="" height="40px" src="{{ url_for('static', filename='Kofi_Logo_Blue.svg') }}" alt="Ko-fi Logo">
+        </a>
+    </div>
+    <div>
+    </div>
 </div>
 
     {% include "content.html" %}
