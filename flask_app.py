@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 from flask import Flask, render_template, request, abort, jsonify, session
 from flask_wtf import FlaskForm
@@ -18,6 +19,7 @@ move_model = model.MoveModel()
 
 pokemon_model = model.PokemonMoveModel()
 pokemon_model.move_model = move_model
+META_VERSION = (Path(__file__).parent / "p5e-data" / "VERSION").read_text()
 
 
 def get_filter():
@@ -100,7 +102,8 @@ def get_request(objects, this_url="/"):
         reverse=reverse,
         this_url=this_url,
         pokemon=pokemon_model.pokemon,
-        pkmn_list=pokemon_model.list
+        pkmn_list=pokemon_model.list,
+        version=META_VERSION
     )
 
 
@@ -113,7 +116,8 @@ def post_request(objects, this_url="/"):
         form=form,
         this_url=this_url,
         pokemon=pokemon_model.pokemon,
-        pkmn_list=pokemon_model.list
+        pkmn_list=pokemon_model.list,
+        version=META_VERSION
     )
 
 
