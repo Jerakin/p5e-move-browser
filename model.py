@@ -1,4 +1,6 @@
 import json
+import sys
+import difflib
 from pathlib import Path
 from dataclasses import dataclass
 import copy
@@ -109,6 +111,12 @@ tm_lookup = {
 
 @dataclass
 class MoveFilter:
+    species: str
+    variant: str
+    egg: bool
+    tm: bool
+    level: bool
+    start: bool
     name: str
     type: str
     power: str
@@ -128,10 +136,10 @@ def convert_move(name, _json):
     move["name"] = name
     move["description"] = _json["Description"]
     move["duration"] = _json["Duration"].replace(", Concentration", "")
-    move["power"] = _json["Move Power"] if "Move Power" in _json else None
-    pp = str(_json["PP"])
-    if "Unl" in pp:
-        pp = '∞'
+    move["power"] = _json["Move Power"] if "Move Power" in _json else []
+    pp = _json["PP"]
+    if "Unl" in str(pp):
+        pp = 99
     move["pp"] = pp
     move["time"] = _json["Move Time"].title()
     move["range"] = "Self" if "Self" in _range else _range
@@ -157,13 +165,32 @@ def _ok(v):
 class PokemonMoveModel:
     def __init__(self):
         self.data = {}
+        self.evolve_from = {}
         self.move_model: MoveModel = None
+        self.list = []
+        self.list_lower_case = []
+        self.pokemon = None
+        self.__build_list()
+        self.__cache_evolve_from_data()
 
-    def __collect_moves(self, data):
+    def __build_list(self):
+        for pkmn in (Path(__file__).parent / "p5e-data/data/pokemon").iterdir():
+            self.list.append(pkmn.stem)
+            self.list_lower_case.append(pkmn.stem.lower())
+
+    def __cache_evolve_from_data(self):
+        with (Path(__file__).parent / "p5e-data/data/evolve.json").open("r") as fp:
+            evolve_data = json.load(fp)
+        for species, data in evolve_data.items():
+            if "into" in data:
+                for into in data["into"]:
+                    self.evolve_from[into] = species
+
+    def __collect_moves(self, species, data):
         moves = {"TM": [], "Starting Move": [], "Egg": []}
         for level in data["Moves"]["Level"]:
             for name in data["Moves"]["Level"][level]:
-                if level not in moves:
+                if f"Level {level}" not in moves:
                     moves[f"Level {level}"] = []
                 moves[f"Level {level}"].append(name)
 
@@ -171,9 +198,20 @@ class PokemonMoveModel:
 
         if "egg" in data["Moves"]:
             moves["Egg"] = data["Moves"]["egg"]
-
-        for n in data["Moves"]["TM"]:
-            moves["TM"].append(tm_lookup[str(n)])
+        else:
+            evolved_from = species
+            while evolved_from:
+                evolved_from = self.evolve_from[evolved_from] if evolved_from in self.evolve_from else False
+                if evolved_from:
+                    cached_moves = self.load(evolved_from)
+                    for move in cached_moves:
+                        if move["source"] == "Egg":
+                            name = move["name"]
+                            if name not in moves["Egg"]:
+                                moves["Egg"].append(move["name"])
+        if "TM" in data["Moves"]:
+            for n in data["Moves"]["TM"]:
+                moves["TM"].append(tm_lookup[str(n)])
         return moves
 
     def add_move(self, move, source):
@@ -183,23 +221,39 @@ class PokemonMoveModel:
         return move
 
     def filter(self, data, filters):
-        return self.move_model.filter(data, filters)
+        selected = []
+        for move in data:
+            if filters.tm is None and move["source"] == "TM":
+                continue
+            if filters.level is None and "Level" in move["source"]:
+                continue
+            if filters.start is None and "Start" in move["source"]:
+                continue
+            if filters.egg is None and move["source"] == "Egg":
+                continue
+
+            selected.append(move)
+        return self.move_model.filter(selected, filters)
 
     def load(self, pokemon):
-        pokemon = pokemon.capitalize()
+        hit = difflib.get_close_matches(pokemon.lower(), self.list_lower_case, 1)
+        pokemon = self.list[self.list_lower_case.index(hit[0])]
+        self.pokemon = pokemon
         if pokemon in self.data:
             return self.data[pokemon]
-        data_file = (Path(__file__).parent / "p5e-data/data/pokemon" / pokemon).with_suffix('.json')
+        data_file = (Path(__file__).parent / "p5e-data/data/pokemon" / (pokemon + '.json'))
         if data_file.exists():
             with data_file.open("r") as fp:
                 data = json.load(fp)
-            moves = self.__collect_moves(data)
+            moves = self.__collect_moves(pokemon, data)
             self.data[pokemon] = []
             for source, moves in moves.items():
                 for move in moves:
                     self.data[pokemon].append(self.add_move(move, source))
 
             return self.data[pokemon]
+        else:
+            print("Could not find", data_file, file=sys.stderr)
         return []
 
 
@@ -224,11 +278,11 @@ class MoveModel:
                 continue
             if _ok(filters.type) and not filters.type.lower() == move["type"].lower():
                 continue
-            if _ok(filters.power) and (move["power"] is not None and filters.power not in move["power"]) or move["power"] is None:
+            if _ok(filters.power) and "power" in move and filters.power not in move["power"]:
                 continue
             if _ok(filters.range) and not filters.range == move["range"]:
                 continue
-            if _ok(filters.pp) and not filters.pp == move["pp"]:
+            if _ok(filters.pp) and not int(filters.pp) == move["pp"]:
                 continue
             if _ok(filters.time) and not filters.time == move["time"]:
                 continue
@@ -238,11 +292,13 @@ class MoveModel:
                 continue
             if _ok(filters.concentration) and not move["concentration"]:
                 continue
+
             selected.append(move)
         reverse = True if filters.sort[0] == '-' else False
         sort = filters.sort[1:] if reverse else filters.sort
 
         return sorted(selected, key=lambda d: d[sort], reverse=reverse)
+
 
 if __name__ == '__main__':
     mm = MoveModel()

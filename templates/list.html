@@ -1,14 +1,96 @@
-<!DOCTYPE html>
-<html lang="eng">
-<head>
-    <meta charset="UTF-8">
-    <title>Welcome</title>
-</head>
-<body>
-    <ul>
-        {% for pokemon in list %}
-          <li><a>{{ pokemon }}</a></li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% for move in list %}
+    <li class="list-group-item border rounded-top bg-white">
+        <div class="move-list" data-toggle="collapse" data-target="#{{move.name | replace(' ','') | replace('\'','')}}">
+            <div class="col-1">
+                {% if move.type != "Typeless" %}
+                <img src="/static/type-icons/element_{{move.type | lower}}.png" alt="{{move.type}}" width="28" height="28">
+                {% endif %}
+            </div>
+            <div class="col">
+                <span>{{move.name}}</span>
+                {% if move.concentration %}
+                <i class="concentration"></i>
+                {% endif %}
+            </div>
+            <div class="col">
+                <span>
+                    {% if move.power %}
+                       {{ move.power|join(', ') }}
+                    {% endif %}
+                </span>
+            </div>
+            <div class="col">
+                <span>{% if move.pp == 99 %} ∞ {% else %} {{move.pp}} {% endif %}</span>
+            </div>
+            <div class="col d-none d-xl-block">
+                <span> {{move.type}}</span>
+            </div>
+            <div class="col">
+                <span> {{move.range}}</span>
+            </div>
+            <div class="col d-none d-md-block">
+                <span> {{move.time}}</span>
+            </div>
+            <div class="col d-none d-lg-block">
+                <span> {{move.duration}}</span>
+            </div>
+            <div class="col-1b">
+                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                </svg>
+            </div>
+        </div>
+        <div class="collapse align-content-left" id="{{move.name | replace(' ','') | replace('\'','')}}" data-parent="#accordion">
+            <hr/>
+            <div class="row extra-info">
+                <div class="col">
+                    <div><b>Move Power</b></div>
+                    <div>{% if move.power %}
+                       {{ move.power|join(', ') }}
+                    {% endif %}</div>
+                </div>
+                <div class="col">
+                    <div><b>PP</b></div>
+                    <p>{{move.pp}}</p>
+                </div>
+                <div class="col">
+                    <div><b>Type</b></div>
+                    <p>{{move.type}}</p>
+                </div>
+                <div class="col">
+                    <div><b>Range</b></div>
+                    <p>{{move.range}}</p>
+                </div>
+            </div>
+            <div class="row extra-info">
+                <div class="col">
+                    <div><b>Move Time</b></div>
+                    <p>{{move.time}}</p>
+                </div>
+                <div class="col">
+                    <div><b>Duration</b></div>
+                    <p>{{move.duration}}</p>
+                </div>
+                <div class="col">
+                    <div><b>Save</b></div>
+                    <p>{% if move.save %}
+                        {{move.save}} Save
+                    {% else %}
+                        -
+                    {% endif %}</p>
+                </div>
+                {% if move.source %}
+                <div class="col">
+                    <div><b>Source</b></div>
+                    <p>{{move.source}}</p>
+                </div>
+                {% else %}
+                <div class="col"></div>
+                {% endif %}
+            </div>
+            <hr/>
+            {{move.description}}
+            {{move.extra}}
+        </div>
+    </li>
+{% endfor %}

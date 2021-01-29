@@ -1,9 +1,9 @@
 import os
+from pathlib import Path
 
 from flask import Flask, render_template, request, abort, jsonify, session
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextField, SubmitField, SelectField
-import wtforms.validators as validators
+from wtforms import StringField, TextField, SubmitField, SelectField, BooleanField
 from werkzeug.datastructures import MultiDict
 
 try:
@@ -19,10 +19,17 @@ move_model = model.MoveModel()
 
 pokemon_model = model.PokemonMoveModel()
 pokemon_model.move_model = move_model
+META_VERSION = (Path(__file__).parent / "p5e-data" / "VERSION").read_text()
 
 
 def get_filter():
     filters = model.MoveFilter(
+        request.args.get('species', default=None),
+        request.args.get('variant', default=None),
+        request.args.get('egg', default=None),
+        request.args.get('tm', default=None),
+        request.args.get('level', default=None),
+        request.args.get('start', default=None),
         request.args.get('name', default=None),
         request.args.get('type', default=None),
         request.args.get('power', default=None),
@@ -35,11 +42,18 @@ def get_filter():
         request.args.get('concentration', default=None),
         request.args.get('sort', default='name')
     )
+
     return filters
 
 
 def post_filter():
     filters = model.MoveFilter(
+        request.form.get('species', default=None),
+        request.form.get('variant', default=None),
+        request.form.get('egg', default=None),
+        request.form.get('tm', default=None),
+        request.form.get('level', default=None),
+        request.form.get('start', default=None),
         request.form.get('name', default=None),
         request.form.get('type', default=None),
         request.form.get('power', default=None),
@@ -52,13 +66,20 @@ def post_filter():
         request.form.get('concentration', default=None),
         request.args.get('sort', default='name')
     )
+
     return filters
 
 
 def handle_session_data(filters):
-    formdata = session.get('filterdata', None)
-    if formdata and not request.args.get('filter', default=True) == "clear":
-        form = SearchForm(MultiDict(formdata))
+    form_data = session.get('movefilterdata', None)
+    if form_data and not request.args.get('filter', default=True) == "clear":
+        form = SearchForm(MultiDict(form_data))
+        filters.species = form.species.data
+        filters.variant = form.variant.data
+        filters.egg = form.egg.data
+        filters.tm = form.tm.data
+        filters.level = form.level.data
+        filters.start = form.start.data
         filters.name = form.name.data
         filters.type = form.type.data
         filters.power = form.power.data
@@ -72,44 +93,56 @@ def get_request(objects, this_url="/"):
     form = SearchForm()
     sort = request.args.get('sort')
     reverse = not (sort and sort[0] == "-")
-    return render_template("move_list.html", list=objects, form=form, sort=sort, reverse=reverse, this_url=this_url)
+
+    return render_template(
+        "home.html",
+        list=objects,
+        form=form,
+        sort=sort,
+        reverse=reverse,
+        this_url=this_url,
+        pokemon=pokemon_model.pokemon,
+        pkmn_list=pokemon_model.list,
+        version=META_VERSION
+    )
 
 
 def post_request(objects, this_url="/"):
     form = SearchForm()
-    session['filterdata'] = request.form
-    return render_template("move_list.html", list=objects, form=form, this_url=this_url)
-
-
-@app.route("/pokemon/<string:pokemon>", methods=['GET'])
-def get_pokemon_list(pokemon):
-    filters = get_filter()
-    handle_session_data(filters)
-    all_objects = pokemon_model.load(pokemon)
-    objects = pokemon_model.filter(all_objects, filters)
-    return get_request(objects, request.path)
-
-
-@app.route("/pokemon/<string:pokemon>", methods=['POST'])
-def post_pokemon_list(pokemon):
-    filters = post_filter()
-    all_objects = pokemon_model.load(pokemon)
-    objects = pokemon_model.filter(all_objects, filters)
-    return get_request(objects, request.path)
+    session['movefilterdata'] = request.form
+    return render_template(
+        "home.html",
+        list=objects,
+        form=form,
+        this_url=this_url,
+        pokemon=pokemon_model.pokemon,
+        pkmn_list=pokemon_model.list,
+        version=META_VERSION
+    )
 
 
 @app.route("/", methods=['GET'])
 def get_moves_list():
+    pokemon_model.pokemon = None
     filters = get_filter()
     handle_session_data(filters)
-    objects = move_model.filter(move_model.data, filters)
+    if filters.species:
+        moves = pokemon_model.load(filters.species)
+        objects = pokemon_model.filter(moves, filters)
+    else:
+        objects = move_model.filter(move_model.data, filters)
     return get_request(objects)
 
 
 @app.route("/", methods=['POST'])
 def post_moves_list():
+    pokemon_model.pokemon = None
     filters = post_filter()
-    objects = move_model.filter(move_model.data, filters)
+    if filters.species:
+        moves = pokemon_model.load(filters.species)
+        objects = pokemon_model.filter(moves, filters)
+    else:
+        objects = move_model.filter(move_model.data, filters)
     return post_request(objects)
 
 
@@ -129,11 +162,18 @@ def _fields(_list):
 
 
 class SearchForm(FlaskForm):
-    name = StringField('Name', [validators.optional()])
+    species = StringField("Pokémon Species")
+    variant = SelectField(u'Variant', choices=[], default=None)
+    start = BooleanField(u'Start', default=True)
+    level = BooleanField(u'Level', default=True)
+    tm = BooleanField(u'TM', default=True)
+    egg = BooleanField(u'Egg', default=True)
+
+    name = StringField('Move Name')
     attack_type = SelectField(u'Attack Type', choices=_fields(['Melee', 'Range']), default=None)
     power = SelectField(u'Move Power', choices=_fields(attributes), default=None)
     pp_field = _fields(pp)
-    pp_field.append(('∞', "Unlimited"))
+    pp_field.append(("99", "Unlimited"))
     pp = SelectField(u'PP', choices=pp_field, default=None)
     type = SelectField(u'Types', choices=_fields(types), default=None)
     save = SelectField(u'Save Required', choices=save_required, default=None)
